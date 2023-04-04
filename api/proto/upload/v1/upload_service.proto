@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package upload.v1;
+
+option go_package = "github.com/romashorodok/stream-source/pb/go/upload/v1;uploadpb";
+
+import "upload/v1/upload.proto";
+
+service UploadService {
+    rpc UploadAudioProcess(stream UploadAudioProcessRequest)
+        returns (stream UploadAudioProcessResponse) {};
+
+    rpc UploadAudioStub(UploadAudioStubRequest) returns (UploadAudioStubResponse);
+}
+
+message UploadAudioStubRequest {
+    string stub_field = 1;
+}
+
+message UploadAudioStubResponse {
+    string stub_field = 1;
+}
+
+message UploadAudioProcessRequest {
+    oneof action {
+        UploadStatus status = 1;
+        GetUploadURL get_upload_url = 2;
+    }
+}
+
+message UploadAudioProcessResponse {
+    oneof action {
+        UploadStatus status = 1;
+        UploadURL upload_url = 2;
+    }
+}
+

@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  envoyproxy:
+    image: envoyproxy/envoy:contrib-dev
+    ports:
+      - "10000:10000"
+    networks:
+      - my-bridge
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./infra/envoy.yaml:/etc/envoy/envoy.yaml
+
+networks:
+  my-bridge:
+    driver: host
+

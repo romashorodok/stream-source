@@ -1,0 +1,21 @@
+version: v1
+plugins:
+  - name: go
+    out: pb/go
+    opt: paths=source_relative
+
+  - name: go-grpc
+    out: pb/go
+    opt:
+      - paths=source_relative
+
+  - name: js
+    out: ./client/pb/ts
+    opt: import_style=commonjs
+
+  - name: ts
+    out: ./client/pb/ts
+    path: ./node_modules/.bin/protoc-gen-ts
+    opt:
+      - module=commonjs
+      - service=grpc-web
