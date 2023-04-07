@@ -3,3 +3,5 @@
 /infra/envoy.yaml
 .DS_Store
 node_modules
+tmp
+.vscode

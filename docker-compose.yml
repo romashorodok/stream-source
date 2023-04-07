@@ -1,15 +1,25 @@
 version: "3.8"
 services:
+
   envoyproxy:
     image: envoyproxy/envoy:contrib-dev
     ports:
       - "10000:10000"
     networks:
       - my-bridge
+    environment:
+      loglevel: debug
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - ./infra/envoy.yaml:/etc/envoy/envoy.yaml
+
+  minio:
+    image: minio/minio:RELEASE.2023-04-07T05-28-58Z
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server --console-address ":9001" /data
 
 networks:
   my-bridge:
