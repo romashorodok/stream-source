@@ -3,7 +3,7 @@ import { grpc } from "@improbable-eng/grpc-web";
 import * as uploadpb from "pb/ts/upload/v1/upload_service_pb_service";
 import { GetPresignURLRequest, GetPresignURLResponse } from "pb/ts/upload/v1/upload_service_pb";
 
-import { GRPC_GATEWAY } from '.';
+import { GRPC_GATEWAY } from '~/env';
 
 export class UploadService {
 
