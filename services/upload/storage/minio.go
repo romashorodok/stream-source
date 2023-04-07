@@ -1,4 +1,4 @@
-package main
+package storage
 
 import (
 	"context"
@@ -16,7 +16,7 @@ type ObjectStore interface {
 }
 
 type MinioService struct {
-	pool *MinioPool
+	Pool *MinioPool
 }
 
 func (s *MinioService) anonymousReadonlyBucket(ctx context.Context, client *minio.Client, bucket string) error {
@@ -59,8 +59,8 @@ func (s *MinioService) createBucketIfNotExist(ctx context.Context, client *minio
 }
 
 func (s *MinioService) GetPresignURL(ctx context.Context, bucket, filename string) (*url.URL, error) {
-	client := s.pool.Client()
-	defer s.pool.Put(client)
+	client := s.Pool.Client()
+	defer s.Pool.Put(client)
 
 	if err := s.createBucketIfNotExist(ctx, client, bucket); err != nil {
 		log.Println("Cannot create bucket. Error", err)

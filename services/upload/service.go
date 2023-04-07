@@ -5,6 +5,7 @@ import (
 	"log"
 
 	uploadpb "github.com/romashorodok/stream-source/pb/go/upload/v1"
+	"github.com/romashorodok/stream-source/services/upload/storage"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -13,7 +14,7 @@ import (
 type UploadService struct {
 	uploadpb.UnimplementedUploadServiceServer
 
-	miniosvc *MinioService
+	miniosvc *storage.MinioService
 }
 
 func (s *UploadService) GetPresignURL(ctx context.Context, in *uploadpb.GetPresignURLRequest) (*uploadpb.GetPresignURLResponse, error) {
@@ -29,4 +30,3 @@ func (s *UploadService) GetPresignURL(ctx context.Context, in *uploadpb.GetPresi
 		Url: url.String(),
 	}, nil
 }
-

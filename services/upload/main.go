@@ -6,6 +6,8 @@ import (
 
 	"google.golang.org/grpc"
 
+    "github.com/romashorodok/stream-source/services/upload/storage"
+
 	uploadpb "github.com/romashorodok/stream-source/pb/go/upload/v1"
 )
 
@@ -19,18 +21,18 @@ func main() {
 		log.Printf("ERROR: %v\n", err)
 	}
 
-	minioPool, err := NewMinioPool(5, &MinioCredentials{
-		user:     "minioadmin",
-		password: "minioadmin",
-		endpoint: "localhost:9000",
+	minioPool, err := storage.NewMinioPool(5, &storage.MinioCredentials{
+		User:     "minioadmin",
+		Password: "minioadmin",
+		Endpoint: "localhost:9000",
 	})
 
 	if err != nil {
 		log.Panic("Cannot init minio pool clients. Error: ", err)
 	}
 
-	minioService := &MinioService{
-		pool: minioPool,
+	minioService := &storage.MinioService{
+		Pool: minioPool,
 	}
 
 	uploadService := &UploadService{

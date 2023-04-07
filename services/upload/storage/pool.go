@@ -1,4 +1,4 @@
-package main
+package storage
 
 import (
 	"log"
@@ -9,9 +9,9 @@ import (
 )
 
 type MinioCredentials struct {
-	user     string
-	password string
-	endpoint string
+	User     string
+	Password string
+	Endpoint string
 }
 
 type MinioPool struct {
@@ -25,8 +25,8 @@ func NewMinioPool(size int, creds *MinioCredentials) (*MinioPool, error) {
 	}
 
 	for i := 0; i < size; i++ {
-		client, err := minio.New(creds.endpoint, &minio.Options{
-			Creds:  credentials.NewStaticV4(creds.user, creds.password, ""),
+		client, err := minio.New(creds.Endpoint, &minio.Options{
+			Creds:  credentials.NewStaticV4(creds.User, creds.Password, ""),
 			Secure: false,
 		})
 
