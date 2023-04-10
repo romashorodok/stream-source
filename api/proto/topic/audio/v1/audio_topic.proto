@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package topic.audio.v1;
+
+option go_package = "github.com/romashorodok/stream-source/pb/go/topic/audio/v1;audiotopicpb";
+
+message AudioTranscoded {
+    required string manifest_file = 1;
+
+    optional string topic = 2 [default = "audio-transcoded-topic"];
+}
+

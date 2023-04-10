@@ -1,0 +1,12 @@
+syntax = "proto2";
+
+package kafka.topic.v1;
+
+option go_package = "github.com/romashorodok/stream-source/pb/go/kafka/topic/v1;transcodetopicpb";
+
+message TranscodeAudio {
+    required string origin_file = 1;
+    required string bucket = 2;
+
+    optional string topic = 3 [default = "transcode-audio-topic"];
+}
