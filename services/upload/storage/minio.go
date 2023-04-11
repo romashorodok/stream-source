@@ -71,3 +71,12 @@ func (s *MinioService) GetPresignURL(ctx context.Context, bucket, filename strin
 
 	return client.PresignedPutObject(ctx, bucket, filename, urlExparation)
 }
+
+func (s *MinioService) GetObjectURL(ctx context.Context, bucket, filename string) (*url.URL, error) {
+	client := s.Pool.Client()
+	defer s.Pool.Put(client)
+
+	urlExparation := time.Duration(5) * time.Minute
+
+	return client.PresignedGetObject(ctx, bucket, filename, urlExparation, nil)
+}

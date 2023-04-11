@@ -11,6 +11,7 @@ import (
 	"time"
 
 	transcodetopicpb "github.com/romashorodok/stream-source/pb/go/kafka/topic/v1"
+	"github.com/romashorodok/stream-source/services/transcode/transcoder"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"google.golang.org/protobuf/proto"
@@ -114,6 +115,8 @@ func processTopicMessages(ctx context.Context, topicChan <-chan *ConsumerContain
 	var wg sync.WaitGroup
 	wg.Add(numWorkers)
 
+	transcodesvc := transcoder.NewTranscoderService(&ctx)
+
 	workerPool := make(chan struct{}, numWorkers)
 	for i := 0; i < numWorkers; i++ {
 		workerPool <- struct{}{}
@@ -135,16 +138,23 @@ func processTopicMessages(ctx context.Context, topicChan <-chan *ConsumerContain
 					wg.Add(1)
 				}()
 
+				transcodesvc.TranscodeAudio(&transcoder.TranscodeData{
+					Bucket:     *msg.Data.Bucket,
+					OriginFile: *msg.Data.OriginFile,
+				})
+
 				// log.Println("Start processing")
 				// log.Println(msg.Data)
 				//
 				// log.Printf("Processing message to topic %s [%d] at offset %v\n",
 				// 	*msg.Message.TopicPartition.Topic, msg.Message.TopicPartition.Partition, msg.Message.TopicPartition.Offset)
-				//
+
 				time.Sleep(time.Second * 30)
-				// log.Println("End processing message")
+				log.Println("End processing message")
 			}(msg)
 		}
+
+		break;
 	}
 }
 
