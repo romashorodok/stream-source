@@ -137,24 +137,18 @@ func processTopicMessages(ctx context.Context, topicChan <-chan *ConsumerContain
 					wg.Done()
 					wg.Add(1)
 				}()
+				log.Printf("Processing message to topic %s [%d] at offset %v\n",
+					*msg.Message.TopicPartition.Topic, msg.Message.TopicPartition.Partition, msg.Message.TopicPartition.Offset)
 
 				transcodesvc.TranscodeAudio(&transcoder.TranscodeData{
 					Bucket:     *msg.Data.Bucket,
 					OriginFile: *msg.Data.OriginFile,
 				})
 
-				// log.Println("Start processing")
-				// log.Println(msg.Data)
-				//
-				// log.Printf("Processing message to topic %s [%d] at offset %v\n",
-				// 	*msg.Message.TopicPartition.Topic, msg.Message.TopicPartition.Partition, msg.Message.TopicPartition.Offset)
-
-				time.Sleep(time.Second * 30)
-				log.Println("End processing message")
+				log.Printf("End pocessing message to topic %s [%d] at offset %v\n",
+					*msg.Message.TopicPartition.Topic, msg.Message.TopicPartition.Partition, msg.Message.TopicPartition.Offset)
 			}(msg)
 		}
-
-		break;
 	}
 }
 
@@ -166,7 +160,7 @@ func main() {
 
 	containerChan := make(chan *ConsumerContainer[*transcodetopicpb.TranscodeAudio])
 	go consumeProtobufTopic(transcodetopicpb.Default_TranscodeAudio_Topic, containerChan)
-	go processTopicMessages(ctx, containerChan, 1)
+	go processTopicMessages(ctx, containerChan, 4)
 
 	select {
 	case <-signals:
