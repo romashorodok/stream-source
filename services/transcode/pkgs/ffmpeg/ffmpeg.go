@@ -43,6 +43,10 @@ func (s *FFMpeg) NewPipe(dirpath string) error {
 	return nil
 }
 
+func (s *FFMpeg) DelPipe() error {
+	return os.Remove(*s.Pipe)
+}
+
 func (s *FFMpeg) NewProcess(sourcefile *string) *exec.Cmd {
 	cmd := exec.Command("ffmpeg", fragments.INPUT, *sourcefile)
 

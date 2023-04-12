@@ -41,6 +41,21 @@ func NewMinioPool(size int, creds *MinioCredentials) (*MinioPool, error) {
 	return pool, nil
 }
 
+func AsyncMinioPool(size int, creds *MinioCredentials) chan *minio.Client {
+	ch := make(chan *minio.Client, size)
+
+	for i := 0; i < size; i++ {
+		client, _ := minio.New(creds.Endpoint, &minio.Options{
+			Creds:  credentials.NewStaticV4(creds.User, creds.Password, ""),
+			Secure: false,
+		})
+
+		ch <- client
+	}
+
+	return ch
+}
+
 func (p *MinioPool) Client() *minio.Client {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()

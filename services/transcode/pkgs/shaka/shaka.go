@@ -20,7 +20,7 @@ type Shaka struct {
 }
 
 func initialSegment(outputPath, filename string) string {
-	return fmt.Sprintf("init_segment=%s/%s", outputPath, filename)
+	return fmt.Sprintf("init_segment=%s/0-%s", outputPath, filename)
 }
 
 func segmentTemplate(outputPath, filename string) string {
