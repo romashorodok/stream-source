@@ -9,7 +9,7 @@ Dependencies:
 ## Audio transcoding
 
 User upload audio file to Next.js server side than Next.js request upload url for that file and make PUT into minio presigned url. </br></br>
-Than if upload success upload service produce the topic to kafka (Not yet implemented), that file should be transcoded throogh transcode service. </br></br>
+Than if upload success upload service produce the topic to kafka (Not yet implemented), that file should be transcoded through transcode service. </br></br>
 The transcode service read topic from kafka and pass it into [TranscodeAudio](https://github.com/romashorodok/stream-source/blob/56a7ed2cd28c1a05873515cd8572a0124080b7b2/services/transcode/main.go#L143) function.
 It start ffmpeg and listen stdout of process and pass bytes into named pipe(Linux). </br></br>
 Than it starts shaka packager which listen name pipe and transform the audio bytes into blob files for MPEG-DASH streaming protocol.</br></br>
