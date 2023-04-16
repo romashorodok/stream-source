@@ -22,6 +22,13 @@ static_resources:
                           timeout: 0s
                           max_stream_duration:
                             grpc_timeout_header_max: 0s
+                      - match: { prefix: "/audio.v1.AudioService" }
+                        route:
+                          cluster: audio_service
+                          timeout: 0s
+                          max_stream_duration:
+                            grpc_timeout_header_max: 0s
+                    cors:
                     cors:
                       allow_origin_string_match:
                         - prefix: "*"
@@ -54,3 +61,17 @@ static_resources:
                   socket_address:
                     address: $UPLOAD_SERVICE_HOST
                     port_value: $UPLOAD_SERVICE_PORT
+    - name: audio_service
+      connect_timeout: 0.25s
+      type: logical_dns
+      http2_protocol_options: {}
+      lb_policy: round_robin
+      load_assignment:
+        cluster_name: cluster_0
+        endpoints:
+          - lb_endpoints:
+            - endpoint:
+                address:
+                  socket_address:
+                    address: $AUDIO_SERVICE_HOST
+                    port_value: $AUDIO_SERVICE_PORT

@@ -49,6 +49,15 @@ services:
     depends_on:
       - zookeeper
 
+  postgres:
+    image: postgres:15.2
+    environment:
+      - POSTGRES_DB=postgresdb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=user
+    ports:
+      - "5432:5432"
+
 networks:
   my-bridge:
     driver: bridge

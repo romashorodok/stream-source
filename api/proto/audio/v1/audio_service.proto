@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package audio.v1;
+
+option go_package = "github.com/romashorodok/stream-source/pb/go/audio/v1;audiopb";
+
+message Audio {
+    string audio_id = 1;
+    string title = 2;
+    string manifest = 4;
+}
+
+message AudioBucket {
+    string audio_bucket_id = 1;
+    string bucket = 2;
+    string origin_file = 3;
+}
+
+service AudioService {
+    rpc CreateAudioBucket(CreateAudioBucketRequest) returns (CreateAudioBucketResponse);
+    rpc BindAudioToBucket(BindAudioToBucketRequest) returns (BindAudioToBucketResponse);
+}
+
+message CreateAudioBucketResponse {
+    AudioBucket audio_bucket = 1;
+}
+
+message CreateAudioBucketRequest {}
+
+// bucket_id:"6c6dff2a-19da-421c-be4e-2f2af59dff44"  bucket:"6f5505e5-369d-45db-b6cd-f8d94715f3cc"  filename:"test.mp3"
+
+message BindAudioToBucketRequest {
+    Audio audio = 1;
+    AudioBucket bucket = 2;
+}
+
+message BindAudioToBucketResponse {}

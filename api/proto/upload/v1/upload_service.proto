@@ -4,15 +4,17 @@ package upload.v1;
 
 option go_package = "github.com/romashorodok/stream-source/pb/go/upload/v1;uploadpb";
 
-import "google/protobuf/empty.proto";
+import "audio/v1/audio_service.proto";
 
 service UploadService {
     rpc GetPresignURL(GetPresignURLRequest) returns (GetPresignURLResponse);
-    rpc SuccessAudioUpload(SuccessAudioUploadRequest) returns (google.protobuf.Empty);
+    rpc SuccessAudioUpload(SuccessAudioUploadRequest) returns (SuccessAudioUploadResponse);
+    rpc FailAudioUpload(FailAudioUploadRequest) returns (FailAudioUploadResponse);
 }
 
 message GetPresignURLRequest {
-    string title = 1;
+    string bucket = 1;
+    string filename = 2;
 }
 
 message GetPresignURLResponse {
@@ -20,5 +22,14 @@ message GetPresignURLResponse {
 }
 
 message SuccessAudioUploadRequest {
-    string audio_uuid = 1;
+    audio.v1.Audio audio = 1;
+    audio.v1.AudioBucket bucket = 2;
 }
+
+message SuccessAudioUploadResponse {}
+
+message FailAudioUploadRequest {
+    audio.v1.AudioBucket bucket = 1;
+}
+
+message FailAudioUploadResponse {}
