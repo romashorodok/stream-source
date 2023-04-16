@@ -9,6 +9,12 @@ import * as audiopb from "pb/ts/audio/v1/audio_service_pb";
 
 grpc.setDefaultTransport(NodeHttpTransport());
 
+export class UploadError extends Error {
+    constructor(public code: number, message: string) {
+        super(message)
+    }
+}
+
 export class UploadService {
 
     constructor(identityContext /* Should it be outside react context? */ = undefined) {
@@ -33,7 +39,7 @@ export class UploadService {
         });
     }
 
-    successAudioUpload(bucket: audiopb.AudioBucket,  audio: audiopb.Audio): Promise<SuccessAudioUploadResponse> {
+    successAudioUpload(bucket: audiopb.AudioBucket, audio: audiopb.Audio): Promise<SuccessAudioUploadResponse> {
         const request = new SuccessAudioUploadRequest();
         request.setAudio(audio);
         request.setBucket(bucket);
@@ -43,10 +49,17 @@ export class UploadService {
                 host: GRPC_GATEWAY, request, onEnd(response) {
                     client.close();
 
-                    if (grpc.Code.OK != response.status)
-                        reject(response.statusMessage);
-                    else
-                        resolve(response.message.toObject() as SuccessAudioUploadResponse);
+                    switch (response.status) {
+                        case grpc.Code.OK:
+                            resolve(response.message.toObject() as SuccessAudioUploadResponse)
+                            break;
+
+                        case grpc.Code.AlreadyExists:
+                            reject(new UploadError(409, response.statusMessage))
+
+                        default:
+                            reject(response.statusMessage)
+                    }
                 }
             });
         });

@@ -27,11 +27,11 @@ message CreateAudioBucketResponse {
 
 message CreateAudioBucketRequest {}
 
-// bucket_id:"6c6dff2a-19da-421c-be4e-2f2af59dff44"  bucket:"6f5505e5-369d-45db-b6cd-f8d94715f3cc"  filename:"test.mp3"
-
 message BindAudioToBucketRequest {
     Audio audio = 1;
     AudioBucket bucket = 2;
 }
 
-message BindAudioToBucketResponse {}
+message BindAudioToBucketResponse {
+    AudioBucket bucket = 1;
+}

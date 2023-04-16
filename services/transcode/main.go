@@ -115,7 +115,28 @@ func processTopicMessages(ctx context.Context, topicChan <-chan *ConsumerContain
 	var wg sync.WaitGroup
 	wg.Add(numWorkers)
 
-	transcodesvc := transcoder.NewTranscoderService(&ctx)
+	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": KAFKA})
+
+	if err != nil {
+		log.Panic(err)
+	}
+
+	defer p.Close()
+
+	go func() {
+		for e := range p.Events() {
+			switch ev := e.(type) {
+			case *kafka.Message:
+				if ev.TopicPartition.Error != nil {
+					log.Printf("Delivery failed: %v\n", ev.TopicPartition)
+				} else {
+					log.Printf("Delivered message to %v\n", ev.TopicPartition)
+				}
+			}
+		}
+	}()
+
+	transcodesvc := transcoder.NewTranscoderService(&ctx, p)
 
 	workerPool := make(chan struct{}, numWorkers)
 	for i := 0; i < numWorkers; i++ {
@@ -142,6 +163,7 @@ func processTopicMessages(ctx context.Context, topicChan <-chan *ConsumerContain
 
 				transcodesvc.TranscodeAudio(&transcoder.TranscodeData{
 					Bucket:     *msg.Data.Bucket,
+					BucketId:   *msg.Data.BucketId,
 					OriginFile: *msg.Data.OriginFile,
 				})
 

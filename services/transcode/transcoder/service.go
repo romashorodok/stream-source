@@ -9,8 +9,11 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"github.com/golang/protobuf/proto"
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
+	audiotopicpb "github.com/romashorodok/stream-source/pb/go/topic/audio/v1"
 	"github.com/romashorodok/stream-source/services/transcode/pkgs/ffmpeg"
 	"github.com/romashorodok/stream-source/services/transcode/pkgs/ffmpeg/codecs"
 	"github.com/romashorodok/stream-source/services/transcode/pkgs/ffmpeg/fragments"
@@ -19,12 +22,14 @@ import (
 
 type TranscodeData struct {
 	Bucket     string
+	BucketId   string
 	OriginFile string
 }
 
 type TranscoderService struct {
 	ctx      *context.Context
 	miniosvc *storage.MinioService
+	producer *kafka.Producer
 }
 
 var creds *storage.MinioCredentials = &storage.MinioCredentials{
@@ -33,7 +38,7 @@ var creds *storage.MinioCredentials = &storage.MinioCredentials{
 	Endpoint: "localhost:9000",
 }
 
-func NewTranscoderService(ctx *context.Context) *TranscoderService {
+func NewTranscoderService(ctx *context.Context, producer *kafka.Producer) *TranscoderService {
 	minioPool, err := storage.NewMinioPool(4, creds)
 
 	if err != nil {
@@ -43,6 +48,7 @@ func NewTranscoderService(ctx *context.Context) *TranscoderService {
 	return &TranscoderService{
 		ctx:      ctx,
 		miniosvc: &storage.MinioService{Pool: minioPool},
+		producer: producer,
 	}
 }
 
@@ -60,10 +66,11 @@ func (s *TranscoderService) TranscodeAudio(t *TranscodeData) error {
 
 	parts := strings.Split(url.String(), "?")
 	urlWithoutQuery := parts[0]
+	manifest := fmt.Sprintf("%s.mpd", uuid.New())
 
 	pipeline := &ffmpeg.FFMpegProcessingPipeline{
 		Sourcefile: urlWithoutQuery,
-		Manifest:   fmt.Sprintf("%s.mpd", uuid.New()),
+		Manifest:   manifest,
 		Workdir:    dir,
 
 		Items: []*ffmpeg.FFMpeg{
@@ -97,6 +104,25 @@ func (s *TranscoderService) TranscodeAudio(t *TranscodeData) error {
 	}
 
 	s.DeliverFiles(dir, t.Bucket)
+
+	topic := audiotopicpb.Default_AudioTranscoded_Topic
+
+	transcoded := &audiotopicpb.AudioTranscoded{
+		ManifestFile: &manifest,
+		Bucket:       &t.Bucket,
+		BucketId:     &t.BucketId,
+	}
+
+	transcodedBytes, err := proto.Marshal(transcoded)
+
+	if err != nil {
+		log.Println("Failed to serialize transcoded topic", err)
+	}
+
+	s.producer.Produce(&kafka.Message{
+		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+		Value:          transcodedBytes,
+	}, nil)
 
 	return err
 }

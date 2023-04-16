@@ -53,19 +53,18 @@ func (s *AudioService) CreateAudioBucket(ctx context.Context, in *audiopb.Create
 }
 
 func (s *AudioService) BindAudioToBucket(ctx context.Context, in *audiopb.BindAudioToBucketRequest) (*audiopb.BindAudioToBucketResponse, error) {
+	reqBucket := &types.AudioBucket{}
+	reqBucket = reqBucket.FromProto(in.GetBucket())
+	bucket := &types.AudioBucket{}
 
 	err := s.db.Transaction(func(q *gorm.DB) error {
-
-		reqBucket := &types.AudioBucket{}
-		reqBucket = reqBucket.FromProto(in.GetBucket())
-		bucket := &types.AudioBucket{}
 
 		if err := q.Where("audio_bucket_id = ?", reqBucket.AudioBucketId).First(bucket).Error; err != nil {
 			return err
 		}
 
 		if containAudio := bucket.AudioId; containAudio != nil {
-			return errors.New("audio and bucket alredy binded")
+			return status.Error(codes.AlreadyExists, "audio and bucket alredy binded")
 		}
 
 		if bucket.AudioBucketId != reqBucket.AudioBucketId || bucket.Bucket != reqBucket.Bucket {
@@ -95,5 +94,7 @@ func (s *AudioService) BindAudioToBucket(ctx context.Context, in *audiopb.BindAu
 		return nil, err
 	}
 
-	return &audiopb.BindAudioToBucketResponse{}, nil
+	return &audiopb.BindAudioToBucketResponse{
+		Bucket: bucket.Proto(),
+	}, nil
 }

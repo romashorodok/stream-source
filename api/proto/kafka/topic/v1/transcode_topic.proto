@@ -7,6 +7,7 @@ option go_package = "github.com/romashorodok/stream-source/pb/go/kafka/topic/v1;
 message TranscodeAudio {
     required string origin_file = 1;
     required string bucket = 2;
+    required string bucket_id = 3;
 
-    optional string topic = 3 [default = "transcode-audio-topic"];
+    optional string topic = 4 [default = "transcode-audio-topic"];
 }

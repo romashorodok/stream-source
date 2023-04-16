@@ -1,7 +1,7 @@
 import { grpc } from "@improbable-eng/grpc-web";
 import { NodeHttpTransport } from "@improbable-eng/grpc-web-node-http-transport";
 import * as audiopb from "pb/ts/audio/v1/audio_service_pb";
-import { UploadService } from "~/lib/services/upload.service"
+import { UploadError, UploadService } from "~/lib/services/upload.service"
 
 grpc.setDefaultTransport(NodeHttpTransport());
 
@@ -19,10 +19,6 @@ export async function PUT(req: Request) {
     const bucketForm: BucketForm = JSON.parse(formData.get("bucket").toString()) as BucketForm;
     const audioMetaData = JSON.parse(formData.get("audio_metadata").toString()) as AudioMetaDataForm;
 
-    // console.log(audioMetaData)
-    // console.log(bucketForm.bucket)
-    //
-
     try {
         const { url } = await uploadService.getUploadUrl(bucketForm.bucket, file.name);
 
@@ -39,14 +35,18 @@ export async function PUT(req: Request) {
         bucket.setAudioBucketId(bucketForm.audioBucketId);
         bucket.setOriginFile(file.name);
 
-        uploadService.successAudioUpload(bucket, audio);
+        await uploadService.successAudioUpload(bucket, audio);
 
         return new Response(JSON.stringify({ message: "OK" }), {
             status: 200
         });
 
     } catch (err) {
-        console.error(err);
+        if (err instanceof UploadError) {
+            return new Response(JSON.stringify({ message: err.message }), {
+                status: err.code
+            });
+        }
 
         return new Response(JSON.stringify({ message: "Something went wrong" }), {
             status: 500

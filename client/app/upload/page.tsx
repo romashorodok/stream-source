@@ -1,7 +1,7 @@
 'use client'
 
 import { AudioBucket } from "pb/ts/audio/v1/audio_service_pb";
-import React, { useCallback, useMemo, useState } from "react"
+import React, { useMemo, useState } from "react"
 import { NEXT_HOST } from "~/env";
 import { AuidoService } from "~/lib/services/audio.service";
 

@@ -16,6 +16,7 @@ export class AuidoService {
                 host: GRPC_GATEWAY, request, onEnd(response) {
                     client.close();
 
+
                     if (grpc.Code.OK != response.status)
                         reject(response.statusMessage)
                     else
