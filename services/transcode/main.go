@@ -5,16 +5,14 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"reflect"
 	"sync"
 	"syscall"
-	"time"
 
 	transcodetopicpb "github.com/romashorodok/stream-source/pb/go/kafka/topic/v1"
+	"github.com/romashorodok/stream-source/pkgs/consumer"
 	"github.com/romashorodok/stream-source/services/transcode/transcoder"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -29,89 +27,7 @@ var config = &kafka.ConfigMap{
 
 var signals = make(chan os.Signal, 1)
 
-type ConsumerContainer[F proto.Message] struct {
-	Message kafka.Message
-	Data    F
-}
-
-func NewConsumerContainer[F proto.Message]() *ConsumerContainer[F] {
-	container := &ConsumerContainer[F]{}
-	typeOfdata := reflect.TypeOf(container.Data).Elem()
-	data := reflect.New(typeOfdata).Interface().(proto.Message)
-	container.Data = data.(F)
-	return container
-}
-
-func consumeProtobufTopic[F proto.Message](topic string, out chan<- *ConsumerContainer[F]) {
-	for {
-		log.Println("Consumer iteration")
-
-		c, err := kafka.NewConsumer(config)
-		if err != nil {
-			log.Printf("Error creating consumer: %v\n", err)
-			time.Sleep(20 * time.Second)
-			continue
-		}
-
-		if err = c.Subscribe(topic, nil); err != nil {
-			log.Printf("Error subscribing to topic: %v\n", err)
-			time.Sleep(20 * time.Second)
-			continue
-		}
-
-		defer c.Close()
-
-		for {
-			log.Println("Consumer reader iteration")
-
-			container := NewConsumerContainer[F]()
-
-			msg, err := c.ReadMessage(-1)
-
-			if err != nil {
-				switch e := err.(type) {
-				case kafka.Error:
-					switch e.Code() {
-					case kafka.ErrTimedOut:
-						log.Println("Timed out while waiting for message")
-
-					case kafka.ErrTransport:
-						log.Println("Connection to broker lost")
-
-					default:
-						// %4|1681132527.138|MAXPOLL|rdkafka#consumer-1| [thrd:main]: Application maximum poll interval (300000ms) exceeded by 162ms (adjust max.poll.interval.ms for long-running message processing): leaving group
-						// 2023/04/10 16:15:57 Error reading message: Application maximum poll interval (300000ms) exceeded by 162ms
-						// NOTE: if consume it loong time, if somehow handle it, if do that may escape one for loop
-						log.Printf("Error reading message: %v\n", err)
-					}
-				default:
-					log.Printf("Error reading message: %v\n", err)
-				}
-
-				c.Close()
-
-				break
-			}
-
-			if err = proto.Unmarshal(msg.Value, container.Data); err != nil {
-				// TODO: When process failed, topic must be published back
-				log.Printf("Error unmarshalling message: %v", err)
-				continue
-			}
-
-			container.Message = *msg
-
-			log.Printf("Delivered message to topic %s [%d] at offset %v\n",
-				*msg.TopicPartition.Topic, msg.TopicPartition.Partition, msg.TopicPartition.Offset)
-
-			// FIX: when chan has 1 size it read 1 topic but if chan is full it wait until can write topic into chan
-
-			out <- container
-		}
-	}
-}
-
-func processTopicMessages(ctx context.Context, topicChan <-chan *ConsumerContainer[*transcodetopicpb.TranscodeAudio], numWorkers int) {
+func processTopicMessages(ctx context.Context, topicChan <-chan *consumer.ConsumerBox[*transcodetopicpb.TranscodeAudio], numWorkers int) {
 	var wg sync.WaitGroup
 	wg.Add(numWorkers)
 
@@ -152,7 +68,7 @@ func processTopicMessages(ctx context.Context, topicChan <-chan *ConsumerContain
 			return
 		case msg := <-topicChan:
 			<-workerPool
-			go func(msg *ConsumerContainer[*transcodetopicpb.TranscodeAudio]) {
+			go func(msg *consumer.ConsumerBox[*transcodetopicpb.TranscodeAudio]) {
 				defer func() {
 					workerPool <- struct{}{}
 					wg.Done()
@@ -180,8 +96,8 @@ func main() {
 
 	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
 
-	containerChan := make(chan *ConsumerContainer[*transcodetopicpb.TranscodeAudio])
-	go consumeProtobufTopic(transcodetopicpb.Default_TranscodeAudio_Topic, containerChan)
+	containerChan := make(chan *consumer.ConsumerBox[*transcodetopicpb.TranscodeAudio])
+	go consumer.ConsumeProtobufTopic(config, transcodetopicpb.Default_TranscodeAudio_Topic, containerChan)
 	go processTopicMessages(ctx, containerChan, 4)
 
 	select {

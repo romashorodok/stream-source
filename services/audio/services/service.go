@@ -1,4 +1,4 @@
-package main
+package services
 
 import (
 	"context"
@@ -17,13 +17,13 @@ import (
 type AudioService struct {
 	audiopb.UnimplementedAudioServiceServer
 
-	db       *gorm.DB
-	miniosvc *storage.MinioService
+	DB       *gorm.DB
+	Miniosvc *storage.MinioService
 }
 
 func (s *AudioService) CreateAudioBucket(ctx context.Context, in *audiopb.CreateAudioBucketRequest) (*audiopb.CreateAudioBucketResponse, error) {
-	client := s.miniosvc.Pool.Client()
-	defer s.miniosvc.Pool.Put(client)
+	client := s.Miniosvc.Pool.Client()
+	defer s.Miniosvc.Pool.Put(client)
 
 	bucket := uuid.New().String()
 
@@ -40,14 +40,14 @@ func (s *AudioService) CreateAudioBucket(ctx context.Context, in *audiopb.Create
 		}
 	}
 
-	s.miniosvc.CreateBucketIfNotExist(ctx, client, bucket)
+	s.Miniosvc.CreateBucketIfNotExist(ctx, client, bucket)
 
 	if err != nil {
 		return nil, status.Error(codes.Unavailable, "Cannot create bucket")
 	}
 
 	audioBucket := &types.AudioBucket{Bucket: bucket, AudioId: nil}
-	s.db.Create(audioBucket)
+	s.DB.Create(audioBucket)
 
 	return &audiopb.CreateAudioBucketResponse{AudioBucket: audioBucket.Proto()}, nil
 }
@@ -57,7 +57,7 @@ func (s *AudioService) BindAudioToBucket(ctx context.Context, in *audiopb.BindAu
 	reqBucket = reqBucket.FromProto(in.GetBucket())
 	bucket := &types.AudioBucket{}
 
-	err := s.db.Transaction(func(q *gorm.DB) error {
+	err := s.DB.Transaction(func(q *gorm.DB) error {
 
 		if err := q.Where("audio_bucket_id = ?", reqBucket.AudioBucketId).First(bucket).Error; err != nil {
 			return err

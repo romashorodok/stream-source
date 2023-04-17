@@ -8,18 +8,16 @@ import (
 type Audio struct {
 	AudioId uuid.UUID `gorm:"primarykey;type:uuid;default:gen_random_uuid()"`
 
-    AudioBucketId *uuid.UUID   `gorm:"type:uuid"`
-    AudioBucket   *AudioBucket `gorm:"foreignKey:AudioId;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+	AudioBucketId *uuid.UUID   `gorm:"type:uuid"`
+	AudioBucket   *AudioBucket `gorm:"foreignKey:AudioId;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 
-	Title    string
-	Manifest string `gorm:"null"`
+	Title string
 }
 
 func (m *Audio) Proto() *audiopb.Audio {
 	return &audiopb.Audio{
-		AudioId:  m.AudioId.String(),
-		Title:    m.Title,
-		Manifest: m.Manifest,
+		AudioId: m.AudioId.String(),
+		Title:   m.Title,
 	}
 }
 
@@ -32,11 +30,14 @@ func (m *Audio) FromProto(model *audiopb.Audio) *Audio {
 }
 
 type AudioBucket struct {
-	AudioBucketId uuid.UUID  `gorm:"primarykey;type:uuid;default:gen_random_uuid()"`
-    AudioId       *uuid.UUID `gorm:"type:uuid;null"`
+	AudioBucketId uuid.UUID `gorm:"primarykey;type:uuid;default:gen_random_uuid()"`
+
+	AudioId *uuid.UUID `gorm:"type:uuid;null"`
+	Audio   *Audio     `gorm:"foreignKey:AudioBucketId;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 
 	Bucket     string
 	OriginFile string `gorm:"null"`
+	Manifest   string `gorm:"null"`
 }
 
 func (m *AudioBucket) Proto() *audiopb.AudioBucket {

@@ -80,7 +80,7 @@ func (s *UploadService) SuccessAudioUpload(ctx context.Context, in *uploadpb.Suc
 		Value:          transcodeBytes,
 	}, nil)
 
-	return nil, nil
+	return &uploadpb.SuccessAudioUploadResponse{}, nil
 }
 
 func (s *UploadService) FailAudioUpload(ctx context.Context, in *uploadpb.FailAudioUploadRequest) (*uploadpb.FailAudioUploadResponse, error) {
