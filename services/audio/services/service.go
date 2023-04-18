@@ -4,13 +4,16 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strings"
 
 	"github.com/google/uuid"
 	audiopb "github.com/romashorodok/stream-source/pb/go/audio/v1"
 	"github.com/romashorodok/stream-source/services/audio/types"
 	"github.com/romashorodok/stream-source/services/upload/storage"
+
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
 	"gorm.io/gorm"
 )
 
@@ -19,6 +22,29 @@ type AudioService struct {
 
 	DB       *gorm.DB
 	Miniosvc *storage.MinioService
+}
+
+func (s *AudioService) ListAudios(ctx context.Context, in *audiopb.ListAudiosRequest) (*audiopb.ListAudiosResponse, error) {
+	var audios []types.Audio
+
+	s.DB.Joins("JOIN audio_buckets ON audio_buckets.audio_bucket_id = audios.audio_bucket_id").
+		Where("audio_buckets.manifest IS NOT NULL").
+		Distinct().
+		Preload("AudioBucket").
+		Find(&audios)
+
+	var resp []*audiopb.ListAudiosResponse_AudioWithManifest
+
+	for _, audio := range audios {
+		bucket := audio.AudioBucket
+
+		resp = append(resp, &audiopb.ListAudiosResponse_AudioWithManifest{
+			Audio:    &audiopb.Audio{AudioId: audio.AudioId.String(), Title: audio.Title},
+			Manifest: "/" + strings.Join([]string{bucket.Bucket, bucket.Manifest}, "/"),
+		})
+	}
+
+	return &audiopb.ListAudiosResponse{Audios: resp}, nil
 }
 
 func (s *AudioService) CreateAudioBucket(ctx context.Context, in *audiopb.CreateAudioBucketRequest) (*audiopb.CreateAudioBucketResponse, error) {

@@ -7,18 +7,31 @@ option go_package = "github.com/romashorodok/stream-source/pb/go/audio/v1;audiop
 message Audio {
     string audio_id = 1;
     string title = 2;
-    string manifest = 4;
 }
 
 message AudioBucket {
     string audio_bucket_id = 1;
     string bucket = 2;
     string origin_file = 3;
+    string manifest = 4;
 }
 
 service AudioService {
+    rpc ListAudios(ListAudiosRequest) returns (ListAudiosResponse);
+
     rpc CreateAudioBucket(CreateAudioBucketRequest) returns (CreateAudioBucketResponse);
     rpc BindAudioToBucket(BindAudioToBucketRequest) returns (BindAudioToBucketResponse);
+}
+
+message ListAudiosRequest {}
+
+message ListAudiosResponse {
+    message AudioWithManifest {
+        Audio audio = 1;
+        string manifest = 2;
+    }
+
+    repeated AudioWithManifest audios = 1;
 }
 
 message CreateAudioBucketResponse {

@@ -1,9 +1,9 @@
 'use client'
 
-import { AudioBucket } from "pb/ts/audio/v1/audio_service_pb";
+import * as audiopb from "pb/ts/audio/v1/audio_service_pb";
 import React, { useMemo, useState } from "react"
 import { NEXT_HOST } from "~/env";
-import { AuidoService } from "~/lib/services/audio.service";
+import { AudioService } from "~/lib/services/audio.service";
 
 
 function useUpload() {
@@ -14,7 +14,7 @@ function useUpload() {
         setFile(files[0]);
     }
 
-    function submit(audioMetaData: AudioMetaDataForm, bucket: AudioBucket.AsObject) {
+    function submit(audioMetaData: AudioMetaDataForm, bucket: audiopb.AudioBucket.AsObject) {
         const url = `${NEXT_HOST}/api/audio`
 
         const formData = new FormData();
@@ -39,7 +39,7 @@ function useUpload() {
     }
 }
 
-const audioService = new AuidoService()
+const audioService = new AudioService()
 
 type AudioMetaDataForm = {
     title: string
@@ -48,7 +48,7 @@ type AudioMetaDataForm = {
 export default function Upload() {
     const { selectFile, submit, message } = useUpload()
 
-    const [audioBucket, setAudioBucket] = useState<AudioBucket.AsObject>()
+    const [audioBucket, setAudioBucket] = useState<audiopb.AudioBucket.AsObject>()
 
     const [formState, setFormState] = React.useReducer<React.Reducer<AudioMetaDataForm, Partial<AudioMetaDataForm>>>(
         (state, next) => ({ ...state, ...next }),

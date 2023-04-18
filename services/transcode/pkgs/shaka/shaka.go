@@ -49,6 +49,7 @@ func (s *Shaka) NewProcess() *exec.Cmd {
 		cmd.Args = append(cmd.Args, in)
 	}
 
+	cmd.Args = append(cmd.Args, "--generate_static_live_mpd")
 	cmd.Args = append(cmd.Args, "--mpd_output", fmt.Sprintf("%s/%s", s.Workdir, s.Manifest))
 	cmd.Args = append(cmd.Args, "--segment_duration", "4")
 	cmd.Args = append(cmd.Args, "--min_buffer_time", "4")
