@@ -2,7 +2,7 @@ import { grpc } from '@improbable-eng/grpc-web'
 import './globals.css'
 import { NodeHttpTransport } from '@improbable-eng/grpc-web-node-http-transport'
 import { PlayerProvider } from '~/lib/contexts/player-context'
-import usePlayer from '~/lib/hooks/usePlayer'
+
 
 export const metadata = {
     title: 'Create Next App',
@@ -18,6 +18,11 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
+            <head>
+                <style>
+                    @import url('https://fonts.googleapis.com/css2?family=Darker+Grotesque:wght@300;400;500;700;800;900&display=swap');
+                </style>
+            </head>
             <body>
                 <PlayerProvider>
                     {children}
