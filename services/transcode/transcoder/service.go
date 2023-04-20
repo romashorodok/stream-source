@@ -78,7 +78,7 @@ func (s *TranscoderService) TranscodeAudio(t *TranscodeData) error {
 				Codec:     codecs.VORBIS,
 				Muxer:     fragments.MUXER_WEBM,
 				Bitrate:   fragments.BITRATE_LOW,
-				Fragments: []fragments.FFMpegFragment{&fragments.NoMetadata{}},
+				Fragments: []fragments.FFMpegFragment{&fragments.NoMetadata{}, &fragments.EchoEffect{}},
 			},
 			{
 				Codec:     codecs.VORBIS,

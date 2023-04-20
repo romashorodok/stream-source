@@ -27,3 +27,9 @@ type NoMetadata struct{}
 func (*NoMetadata) GetFragment() (string, string) {
 	return "-map_metadata", "0:s:0"
 }
+
+type EchoEffect struct{}
+
+func (*EchoEffect) GetFragment() (string, string) {
+	return "-af", "highpass=f=200, lowpass=f=3000"
+}
