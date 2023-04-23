@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package identity.v1;
+
+option go_package = "github.com/romashorodok/stream-source/pb/go/identity/v1;identitypb";
+
+message User {
+    string username = 1;
+    string password = 2;
+}
+
+message AccessToken {
+    string value = 1;
+}
+
+message RefreshToken {
+    string value = 1;
+}

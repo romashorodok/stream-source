@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package identity.v1;
+
+option go_package = "github.com/romashorodok/stream-source/pb/go/identity/v1;identitypb";
+
+import "identity/v1/user.proto";
+
+service IdentityService {
+    rpc Login(LoginRequest) returns (LoginResponse);
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+    rpc RefreshAuthentication(RefreshAuthenticationRequest) returns (RefreshAuthenticationResponse);
+}
+
+message LoginRequest {
+    string username = 1;
+    string password = 2;
+}
+message LoginResponse {
+    identity.v1.AccessToken access_token = 1;
+    identity.v1.RefreshToken refresh_token = 2;
+}
+
+message CreateUserRequest {
+    User user = 1;
+}
+message CreateUserResponse {
+    identity.v1.AccessToken access_token = 1;
+    identity.v1.RefreshToken refresh_token = 2;
+}
+
+message RefreshAuthenticationRequest { }
+message RefreshAuthenticationResponse {
+    identity.v1.AccessToken access_token = 1;
+    identity.v1.RefreshToken refresh_token = 2;
+}
