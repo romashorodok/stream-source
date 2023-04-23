@@ -17,6 +17,8 @@ On final stage it take all produced files and upload it into minio object storag
 
 &nbsp;&nbsp;&nbsp;&nbsp;[Described code here](https://github.com/romashorodok/stream-source/blob/main/services/transcode/transcoder/service.go)
 
+![alt sequence diagram](./docs/diagram.png)
+
 Produced output example for one audio file with different bit-rates in webm container type:
 ```xaml
 <?xml version="1.0" encoding="UTF-8"?>
