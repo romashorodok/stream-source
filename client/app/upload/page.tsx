@@ -22,7 +22,7 @@ function useUpload() {
         formData.set("audio_metadata", JSON.stringify(audioMetaData))
 
         fetch(url, {
-            method: 'PUT',
+            method: 'POST',
             body: formData
         })
             .then(resp => resp.json())

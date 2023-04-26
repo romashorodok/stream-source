@@ -11,7 +11,7 @@ type AudioMetaDataForm = { title: string }
 const uploadService = new UploadService();
 const audioService = new AudioService()
 
-export async function PUT(req: Request) {
+export async function POST(req: Request) {
     // TODO: Handle user identity
 
     const formData = await req.formData();
