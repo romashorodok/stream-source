@@ -1,0 +1,60 @@
+<mxfile host="app.diagrams.net" modified="2023-04-21T07:38:59.286Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/111.0" etag="PyxO7VxYo47C3DDHf6iU" version="21.2.1">
+  <diagram name="Page-1" id="s8aeOHhHcDt7jOPaYn6S">
+    <mxGraphModel dx="944" dy="623" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vB8LoLDzuZBDfH_Vdatu-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="vB8LoLDzuZBDfH_Vdatu-1" target="vB8LoLDzuZBDfH_Vdatu-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ReoFPs7_heMlFXbdz2OD-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="vB8LoLDzuZBDfH_Vdatu-1" target="ReoFPs7_heMlFXbdz2OD-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ReoFPs7_heMlFXbdz2OD-4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="vB8LoLDzuZBDfH_Vdatu-1" target="ReoFPs7_heMlFXbdz2OD-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vB8LoLDzuZBDfH_Vdatu-1" value="User" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="160" y="260" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vB8LoLDzuZBDfH_Vdatu-2" value="Upload audio" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="290" y="390" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="vB8LoLDzuZBDfH_Vdatu-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="vB8LoLDzuZBDfH_Vdatu-3" target="vB8LoLDzuZBDfH_Vdatu-7" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="200" y="240" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="290" y="150" />
+              <mxPoint x="290" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vB8LoLDzuZBDfH_Vdatu-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="vB8LoLDzuZBDfH_Vdatu-3" target="vB8LoLDzuZBDfH_Vdatu-6" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="150" />
+              <mxPoint x="290" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="vB8LoLDzuZBDfH_Vdatu-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="vB8LoLDzuZBDfH_Vdatu-3" target="vB8LoLDzuZBDfH_Vdatu-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="vB8LoLDzuZBDfH_Vdatu-3" value="&lt;div&gt;Anonym&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+          <mxGeometry x="160" y="120" width="30" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vB8LoLDzuZBDfH_Vdatu-6" value="Listen audio" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="425" y="90" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="vB8LoLDzuZBDfH_Vdatu-7" value="&lt;div&gt;Search audio&lt;/div&gt;" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="425" y="190" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ReoFPs7_heMlFXbdz2OD-1" value="Edit audio metadata" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="290" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ReoFPs7_heMlFXbdz2OD-2" value="Delete auido" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="290" y="480" width="120" height="80" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
