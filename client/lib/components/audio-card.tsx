@@ -71,9 +71,8 @@ export default function({ audio, manifest }: Props) {
                             onPlayClick={player?.play}
                             onPauseClick={player?.pause} />
                         : null}
-
                 </AspectRatio.Root>
-                <h4 className="flex-[2] text-lg font-bold h-[36px] overflow-hidden overflow-ellipsis">{audio.title + 'SOLOGNGTETST'}</h4>
+                <h4 className="flex-[2] text-lg font-bold h-[36px] overflow-hidden overflow-ellipsis">{audio.title}</h4>
             </div>
         </div>
     )

@@ -63,6 +63,8 @@ func ConsumeProtobufTopic[F proto.Message](config *kafka.ConfigMap, topic string
 						// 2023/04/10 16:15:57 Error reading message: Application maximum poll interval (300000ms) exceeded by 162ms
 						// NOTE: if consume it loong time, if somehow handle it, if do that may escape one for loop
 						log.Printf("Error reading message: %v\n", err)
+
+						time.Sleep(time.Second * 10)
 					}
 				default:
 					log.Printf("Error reading message: %v\n", err)

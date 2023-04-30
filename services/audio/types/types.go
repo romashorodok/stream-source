@@ -33,7 +33,7 @@ type AudioBucket struct {
 	AudioBucketId uuid.UUID `gorm:"primarykey;type:uuid;default:gen_random_uuid()"`
 
 	AudioId *uuid.UUID `gorm:"type:uuid;null"`
-	Audio   *Audio     `gorm:"foreignKey:AudioBucketId;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
+	// Audio   *Audio     `gorm:"foreignKey:AudioBucketId;constraint:OnUpdate:CASCADE,OnDelete:SET NULL"`
 
 	Bucket     string
 	OriginFile string `gorm:"null"`
